@@ -1,6 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:background="#ff0000">
+
+    <ImageView
+        android:id="@+id/title_city_manager"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:src="@drawable/title_city"
+        android:contentDescription="@string/title_city_manager"
+        android:layout_gravity="center"/>
+
+    <ImageView
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="#A71717"
+        android:contentDescription="@string/todo" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:text="@string/pk_weather"
+        android:textSize="22sp"
+        android:textColor="#ffffff"
+        android:layout_gravity="center"
+        android:textAlignment="center"
+        android:gravity="center"/>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#ff0000"
+        android:gravity="end">
+
+        <ImageView
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:src="@drawable/base_action_bar_action_city"
+            android:layout_gravity="center"
+            android:contentDescription="@string/current_location" />
+
+        <ImageView
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:src="@drawable/title_share"
+            android:layout_gravity="center"
+            android:contentDescription="@string/todo"/>
+
+        <ImageView
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:src="@drawable/title_update"
+            android:layout_gravity="center"
+            android:contentDescription="@string/update"/>
+    </LinearLayout>
 
 </LinearLayout>

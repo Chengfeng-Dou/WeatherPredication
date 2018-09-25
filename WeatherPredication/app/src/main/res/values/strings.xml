@@ -1,3 +1,19 @@
 <resources>
-    <string name="app_name">WeatherPredication</string>
+    <string name="app_name">天气预报</string>
+    <string name="title_city_manager">城市管理</string>
+    <string name="pk_weather">北京天气</string>
+    <string name="current_location">当前地址</string>
+    <string name="update">更新</string>
+    <string name="todo">TODO</string>
+    <string name="city_name">北  京</string>
+    <string name="publish_date">今天18:25分发布</string>
+    <string name="humidity">湿度57%</string>
+    <string name="degree">温度5 °C</string>
+    <string name="pm2_5">PM2.5</string>
+    <string name="pollution">重 度 污 染</string>
+    <string name="_100">100</string>
+    <string name="week_days">今天 星期三</string>
+    <string name="degree_range">-2°C ~ 7°C</string>
+    <string name="weather">多云转晴</string>
+    <string name="wind">微风</string>
 </resources>
