@@ -22,6 +22,7 @@
                 android:gravity="center"/>
 
             <TextView
+                android:id="@+id/pm25"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:textColor="#ffffff"
@@ -41,6 +42,7 @@
     </LinearLayout>
     
     <TextView
+        android:id="@+id/quality"
         android:layout_width="match_parent"
         android:layout_height="25dp"
         android:text="@string/pollution"

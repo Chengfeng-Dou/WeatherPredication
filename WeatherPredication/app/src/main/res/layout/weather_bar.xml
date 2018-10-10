@@ -21,6 +21,7 @@
         android:layout_margin="15dp">
 
         <TextView
+            android:id="@+id/datetime"
             android:layout_width="match_parent"
             android:layout_height="25dp"
             android:text="@string/week_days"
@@ -28,6 +29,7 @@
             android:gravity="start"/>
 
         <TextView
+            android:id="@+id/temperature"
             android:layout_width="match_parent"
             android:layout_height="25dp"
             android:text="@string/degree_range"
@@ -35,6 +37,7 @@
             android:gravity="start"/>
 
         <TextView
+            android:id="@+id/weather"
             android:layout_width="match_parent"
             android:layout_height="25dp"
             android:text="@string/weather"
@@ -42,6 +45,7 @@
             android:gravity="start"/>
 
         <TextView
+            android:id="@+id/fengli"
             android:layout_width="match_parent"
             android:layout_height="25dp"
             android:text="@string/wind"

@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">天气预报</string>
     <string name="title_city_manager">城市管理</string>
-    <string name="pk_weather">北京天气</string>
+    <string name="pk_weather">天气</string>
     <string name="current_location">当前地址</string>
     <string name="update">更新</string>
     <string name="todo">TODO</string>
@@ -16,4 +16,6 @@
     <string name="degree_range">-2°C ~ 7°C</string>
     <string name="weather">多云转晴</string>
     <string name="wind">微风</string>
+    <string name="day">白天</string>
+    <string name="night">晚上</string>
 </resources>
