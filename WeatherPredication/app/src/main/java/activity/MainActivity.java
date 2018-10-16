@@ -1,6 +1,7 @@
-package weather;
+package activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,6 +23,7 @@ import util.XmlParser;
 
 public class MainActivity extends Activity {
     private ImageView refreshBtn;
+    private ImageView cityManage;
     private TextView cityName;
     private TextView dateTime;
     private TextView temperature;
@@ -50,22 +52,30 @@ public class MainActivity extends Activity {
 
 
     private void bindViews(){
-        refreshBtn = (ImageView) findViewById(R.id.refresh);
-        cityName = (TextView) findViewById(R.id.city_name);
-        dateTime = (TextView) findViewById(R.id.datetime);
-        temperature = (TextView) findViewById(R.id.temperature);
-        weather = (TextView) findViewById(R.id.weather);
-        fengli = (TextView) findViewById(R.id.fengli);
-        pm25 = (TextView) findViewById(R.id.pm25);
-        quality = (TextView) findViewById(R.id.quality);
-        city = (TextView) findViewById(R.id.city);
-        publishTime = (TextView) findViewById(R.id.publish_time);
-        wendu = (TextView) findViewById(R.id.wendu);
-        shidu = (TextView) findViewById(R.id.shidu);
+        refreshBtn = findViewById(R.id.refresh);
+        cityName = findViewById(R.id.city_name);
+        dateTime = findViewById(R.id.datetime);
+        temperature = findViewById(R.id.temperature);
+        weather = findViewById(R.id.weather);
+        fengli = findViewById(R.id.fengli);
+        pm25 = findViewById(R.id.pm25);
+        quality = findViewById(R.id.quality);
+        city = findViewById(R.id.city);
+        publishTime = findViewById(R.id.publish_time);
+        wendu = findViewById(R.id.wendu);
+        shidu = findViewById(R.id.shidu);
+        cityManage = findViewById(R.id.title_city_manager);
     }
 
     private void bindListener(){
         refreshBtn.setOnClickListener(new RefreshListener());
+        cityManage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent selectCity = new Intent(MainActivity.this, SelectCityActivity.class);
+                startActivity(selectCity);
+            }
+        });
     }
 
 
@@ -87,18 +97,18 @@ public class MainActivity extends Activity {
 
     private void refreshData(String data){
         CityData cityData = parser.parseSimpleObjectFromXML(CityData.class, data);
-        cityName.setText(cityData.getCity() + " " + "天气");
+        cityName.setText(String.format("%s 天气", cityData.getCity()));
         city.setText(cityData.getCity());
-        publishTime.setText("更新时间" + " " + cityData.getUpdatetime());
-        fengli.setText("风力" + "" + cityData.getFengli());
+        publishTime.setText(String.format("更新时间 %s", cityData.getUpdatetime()));
+        fengli.setText(String.format("风力%s", cityData.getFengli()));
         pm25.setText(cityData.getPm25());
         quality.setText(cityData.getQuality());
-        wendu.setText("温度" + " " + cityData.getWendu());
-        shidu.setText("湿度" + " " + cityData.getShidu());
+        wendu.setText(String.format("温度 %s", cityData.getWendu()));
+        shidu.setText(String.format("湿度 %s", cityData.getShidu()));
 
         Weather todayWeather = cityData.getForecast()[0];
         dateTime.setText(todayWeather.getDate());
-        temperature.setText(todayWeather.getLow() + "-" + todayWeather.getHigh());
+        temperature.setText(String.format("%s-%s", todayWeather.getLow(), todayWeather.getHigh()));
         if(DateUtil.isDayTime()){
             weather.setText(todayWeather.getDay().getFengxiang());
         }else{

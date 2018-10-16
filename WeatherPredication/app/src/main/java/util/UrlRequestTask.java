@@ -16,7 +16,7 @@ import java.net.URL;
  */
 
 class UrlRequestTask implements Runnable{
-    private String address = null;
+    private String address;
     private int msgFlag;
     private Handler msgHandler;
 

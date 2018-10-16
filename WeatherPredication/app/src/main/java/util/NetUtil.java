@@ -6,6 +6,8 @@ import android.net.NetworkInfo;
 import android.os.Handler;
 import android.widget.Toast;
 
+import java.util.Objects;
+
 /**
  * Created by douchengfeng on 2018/10/9.
  *
@@ -23,7 +25,7 @@ public class NetUtil {
 
     private static NetState getNetworkState(Context context){
         ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = manager.getActiveNetworkInfo();
+        NetworkInfo networkInfo = Objects.requireNonNull(manager).getActiveNetworkInfo();
 
         if(networkInfo == null){
             return NetState.NONE;
