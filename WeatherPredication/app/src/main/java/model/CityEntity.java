@@ -1,8 +1,10 @@
 package model;
 
-public class City {
+
+public class CityEntity {
     private String cityCode;
     private String cityName;
+    private String pinyin;
 
     public String getCityCode() {
         return cityCode;
@@ -18,5 +20,13 @@ public class City {
 
     public void setCityName(String cityName) {
         this.cityName = cityName;
+    }
+
+    public String getPinyin() {
+        return pinyin;
+    }
+
+    public void setPinyin(String pinyin) {
+        this.pinyin = pinyin;
     }
 }

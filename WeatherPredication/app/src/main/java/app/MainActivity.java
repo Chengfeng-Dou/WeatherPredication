@@ -1,4 +1,4 @@
-package activity;
+package app;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -10,16 +10,18 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.weather.douchengfeng.weatherpredication.R;
 
 
+import select_city.PickCityActivity;
 import model.CityData;
 import model.Weather;
 import util.DateUtil;
 import util.MsgFlag;
 import util.NetUtil;
-import util.XmlParser;
+import util.XmlUtil;
 
 public class MainActivity extends Activity {
     private ImageView refreshBtn;
@@ -38,20 +40,24 @@ public class MainActivity extends Activity {
 
 
     private Handler dataHandler = new RefreshDateReceiver(this);
-    private XmlParser parser = new XmlParser();
+    private XmlUtil parser = new XmlUtil();
+    private SharedPreferences sharedPreferences;
+    private CityData cityData;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.show_weather);
         NetUtil.toastNetworkState(this);
+        sharedPreferences = getSharedPreferences("config", MODE_PRIVATE);
 
         bindViews();
         bindListener();
+        refreshWeather();
     }
 
 
-    private void bindViews(){
+    private void bindViews() {
         refreshBtn = findViewById(R.id.refresh);
         cityName = findViewById(R.id.city_name);
         dateTime = findViewById(R.id.datetime);
@@ -67,36 +73,53 @@ public class MainActivity extends Activity {
         cityManage = findViewById(R.id.title_city_manager);
     }
 
-    private void bindListener(){
+    private void bindListener() {
         refreshBtn.setOnClickListener(new RefreshListener());
         cityManage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent selectCity = new Intent(MainActivity.this, SelectCityActivity.class);
-                startActivity(selectCity);
+                Intent selectCity = new Intent(MainActivity.this, PickCityActivity.class);
+                selectCity.putExtra("currentCity", cityData.getCity());
+                startActivityForResult(selectCity, 2);
             }
         });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        String cityCode = data.getStringExtra("cityCode");
+        if(cityCode.equals("null")){
+            return;
+        }
+        Toast.makeText(this,"get city code! " + cityCode, Toast.LENGTH_SHORT).show();
+        refreshWeather(cityCode);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("main_city_code", cityCode);
+        editor.apply();
+    }
 
-    private class RefreshListener implements View.OnClickListener{
-        private SharedPreferences sharedPreferences = getSharedPreferences("config", MODE_PRIVATE);
+    private class RefreshListener implements View.OnClickListener {
 
         @Override
         public void onClick(View v) {
-            String cityCode = sharedPreferences.getString("main_city_code", "101010100");
-            Log.d("myWeather", cityCode);
-
-            if(NetUtil.netWorkIsOk(MainActivity.this)){
-                NetUtil.getDataFromUrl("http://wthrcdn.etouch.cn/WeatherApi?citykey=" + cityCode, MsgFlag.REFRESH, dataHandler);
-            }
+            refreshWeather();
         }
-
-
     }
 
-    private void refreshData(String data){
-        CityData cityData = parser.parseSimpleObjectFromXML(CityData.class, data);
+    private void refreshWeather() {
+        String cityCode = sharedPreferences.getString("main_city_code", "101010100");
+        Log.d("myWeather", cityCode);
+        refreshWeather(cityCode);
+    }
+
+    private void refreshWeather(String cityCode) {
+        if (NetUtil.netWorkIsOk(MainActivity.this)) {
+            NetUtil.getDataFromUrl("http://wthrcdn.etouch.cn/WeatherApi?citykey=" + cityCode, MsgFlag.REFRESH, dataHandler);
+        }
+    }
+
+    private void refreshData(String data) {
+        cityData = parser.parseSimpleObjectFromXML(CityData.class, data);
         cityName.setText(String.format("%s 天气", cityData.getCity()));
         city.setText(cityData.getCity());
         publishTime.setText(String.format("更新时间 %s", cityData.getUpdatetime()));
@@ -109,20 +132,18 @@ public class MainActivity extends Activity {
         Weather todayWeather = cityData.getForecast()[0];
         dateTime.setText(todayWeather.getDate());
         temperature.setText(String.format("%s-%s", todayWeather.getLow(), todayWeather.getHigh()));
-        if(DateUtil.isDayTime()){
+        if (DateUtil.isDayTime()) {
             weather.setText(todayWeather.getDay().getFengxiang());
-        }else{
+        } else {
             weather.setText(todayWeather.getNight().getFengxiang());
         }
-
 
 
         Log.d("myWeather", cityData.toString());
     }
 
 
-
-    private static class RefreshDateReceiver extends Handler{
+    private static class RefreshDateReceiver extends Handler {
         private MainActivity mainActivity;
 
         RefreshDateReceiver(MainActivity mainActivity) {
@@ -131,7 +152,7 @@ public class MainActivity extends Activity {
 
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what){
+            switch (msg.what) {
                 case MsgFlag.REFRESH:
 
                     String response = (String) msg.obj;

@@ -3,14 +3,14 @@ package app;
 import android.app.Application;
 import android.util.Log;
 
-import java.util.List;
+import java.util.ArrayList;
 
-import db.CityDB;
-import model.City;
+import util.CityDBUtil;
+import model.CityEntity;
 
 public class WeatherPredication extends Application {
     private static final String TAG = "db_application";
-    private List<City> cityList;
+    private ArrayList<CityEntity> cityList;
 
     @Override
     public void onCreate() {
@@ -23,13 +23,16 @@ public class WeatherPredication extends Application {
         new Thread(){
             @Override
             public void run() {
-                CityDB db = CityDB.openCityDB(WeatherPredication.this);
+                CityDBUtil db = CityDBUtil.openCityDB(WeatherPredication.this);
                 cityList = db.getAllCity();
-                for(City city: cityList){
+                for(CityEntity city: cityList){
                     Log.d(TAG, String.format("%s: %s", city.getCityName(), city.getCityCode()));
                 }
             }
         }.start();
     }
 
+    public ArrayList<CityEntity> getCityList() {
+        return cityList;
+    }
 }

@@ -21,7 +21,7 @@ import java.util.Map;
  *
  */
 
-public class XmlParser {
+public class XmlUtil {
 
     public <T> T parseSimpleObjectFromXML(Class<T> tClass, String xml){
         Map<String, Field> fieldsNameMap = getFieldsNameMap(tClass);

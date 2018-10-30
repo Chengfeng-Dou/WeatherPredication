@@ -20,4 +20,6 @@
     <string name="night">晚上</string>
     <string name="place_holder">这是一个临时页面</string>
     <string name="current_city">当前城市 北京</string>
+    <string name="input">请输入城市名称或拼音</string>
+    <string name="cur_pos">当前位置</string>
 </resources>

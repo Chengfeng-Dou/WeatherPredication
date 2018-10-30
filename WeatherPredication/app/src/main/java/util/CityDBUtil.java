@@ -1,4 +1,4 @@
-package db;
+package util;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -11,35 +11,45 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
 
-import model.City;
+import model.CityEntity;
 
-public class CityDB {
+public class CityDBUtil {
     private static final String DB_NAME = "city.db";
     private static final String TABLE_NAME = "city";
     private SQLiteDatabase db;
+    private static CityDBUtil instance;
 
-    private CityDB(Context context, String path) {
+    private CityDBUtil(Context context, String path) {
         db = context.openOrCreateDatabase(path, Context.MODE_PRIVATE, null);
     }
 
-    public List<City> getAllCity() {
-        List<City> cities = new ArrayList<>();
-        Cursor cursor = db.rawQuery(String.format("select * from %s", TABLE_NAME), null);
+    public ArrayList<CityEntity> getAllCity() {
+        ArrayList<CityEntity> cities = new ArrayList<>();
+        Cursor cursor = db.rawQuery(String.format("select * from %s order by firstpy", TABLE_NAME), null);
+
         while (cursor.moveToNext()) {
-            City city = new City();
+            CityEntity city = new CityEntity();
             city.setCityCode(cursor.getString(cursor.getColumnIndex("number")));
             city.setCityName(cursor.getString(cursor.getColumnIndex("city")));
+            city.setPinyin(cursor.getString(cursor.getColumnIndex("firstpy")).toUpperCase());
             cities.add(city);
         }
 
         cursor.close();
-
         return cities;
     }
 
-    public static CityDB openCityDB(Context context) {
+    public static CityDBUtil openCityDB(Context context) {
+        if (instance == null) {
+            String path = getCreateDBAndGetDBPath(context);
+            instance = new CityDBUtil(context, path);
+        }
+        return instance;
+    }
+
+
+    private static String getCreateDBAndGetDBPath(Context context) {
         String dirPath = File.separator +
                 "data" + Environment.getDataDirectory().getAbsolutePath() +
                 File.separator + context.getPackageName() +
@@ -81,14 +91,13 @@ public class CityDB {
 
             } finally {
                 try {
-                    if(in != null) in.close();
-                    if(out != null) out.close();
+                    if (in != null) in.close();
+                    if (out != null) out.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         }
-
-        return new CityDB(context, path);
+        return path;
     }
 }
