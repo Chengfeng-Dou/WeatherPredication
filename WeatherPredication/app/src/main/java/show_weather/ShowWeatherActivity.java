@@ -111,11 +111,19 @@ public class ShowWeatherActivity extends Activity {
 
                 for (CityEntity cityEntity : cityEntities) {
                     if (cityEntity.getCityName().equals(city)) {
-                        refreshWeatherByCityCode(cityEntity.getCityCode());
+                        String cityCode = cityEntity.getCityCode();
+                        setCurrentCity(cityCode);
+                        refreshWeatherByCityCode(cityCode);
                     }
                 }
             }
         });
+    }
+
+    private void setCurrentCity(String cityCode) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("main_city_code", cityCode);
+        editor.apply();
     }
 
     @Override
@@ -124,10 +132,12 @@ public class ShowWeatherActivity extends Activity {
         if (cityCode.equals("null")) {
             return;
         }
-        refreshWeatherByCityCode(cityCode);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("main_city_code", cityCode);
-        editor.apply();
+
+        if (!failedToSetCannotRefreshNow()) {
+            refreshWeatherByCityCode(cityCode);
+        }
+
+        setCurrentCity(cityCode);
     }
 
 

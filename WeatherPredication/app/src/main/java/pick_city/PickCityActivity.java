@@ -221,8 +221,8 @@ public class PickCityActivity extends Activity {
                     return false;
                 }
 
-
-                return true;
+                // 如果 cityName 比 text 要短，那么就不匹配了
+                return namePtr <= cityName.length() - 1 || textPtr >= text.length();
             }
         });
     }

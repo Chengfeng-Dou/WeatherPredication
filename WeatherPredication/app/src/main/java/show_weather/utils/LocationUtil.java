@@ -30,6 +30,8 @@ public class LocationUtil {
             Toast.makeText(context, "请允许赋予程序定位权限", Toast.LENGTH_LONG).show();
             return null;
         }
+
+
         Location currentLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         if (currentLocation == null) {
             Toast.makeText(context, "无法获取当前位置", Toast.LENGTH_SHORT).show();
