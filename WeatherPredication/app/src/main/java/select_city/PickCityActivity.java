@@ -2,6 +2,7 @@ package select_city;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +16,7 @@ import com.weather.douchengfeng.weatherpredication.R;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import app.WeatherPredication;
 import model.CityEntity;
@@ -31,6 +33,7 @@ public class PickCityActivity extends Activity {
     private RecyclerView recyclerView;
     private CitiesAdapter adapter;
     private List<CityEntity> cityEntities;
+    private SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +57,20 @@ public class PickCityActivity extends Activity {
             }
         });
 
+        searchView = findViewById(R.id.search_city);
+        int textViewId = getResources().getIdentifier("android:id/search_src_text", null, null);
+        TextView textView = searchView.findViewById(textViewId);
+        textView.setTextColor(Color.BLACK);//字体颜色
+        textView.setTextSize(20);//字体、提示字体大小
+        textView.setHintTextColor(Color.GRAY);//提示字体颜色**
+        textView.setHint("请输入城市名称"); // 设置提示语
+        searchView.setIconified(false);
+        int closeBtnId = getResources().getIdentifier("android:id/search_close_btn", null, null);
+        ImageView closeBtn = searchView.findViewById(closeBtnId);
+        closeBtn.setVisibility(View.INVISIBLE); //使关闭按钮不可见
+
+
+
         quickIndexView = findViewById(R.id.quickIndexView);
 
         recyclerView = findViewById(R.id.recyclerView);
@@ -63,10 +80,11 @@ public class PickCityActivity extends Activity {
 
         cityEntities = ((WeatherPredication) getApplication()).getCityList();
         String cityName = getIntent().getStringExtra("currentCity");
-        ((TextView) findViewById(R.id.cur_city)).setText(String.format("当前城市%s", cityName));
+        ((TextView) findViewById(R.id.cur_city)).setText(String.format("当前城市: %s", cityName));
 
         setAdapter(cityEntities);
     }
+
 
     private void setAdapter(List<CityEntity> cityEntities) {
         adapter = new CitiesAdapter(this, entity2DataBean(cityEntities));
@@ -123,8 +141,9 @@ public class PickCityActivity extends Activity {
         });
 
 
-        SearchView searchView = findViewById(R.id.search_city);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            private Pattern inputFilter = Pattern.compile("([\\u4e00-\\u9fa5]|[a-z]|[A-Z])*");
+
             @Override
             public boolean onQueryTextSubmit(String query) {
                 return false;
@@ -139,8 +158,13 @@ public class PickCityActivity extends Activity {
                     return true;
                 }
 
-
                 List<CityEntity> target = new LinkedList<>();
+
+                if (!inputFilter.matcher(newText).matches()) { // 如果输入包含汉字和字母意外的字符，则显示空
+                    setAdapter(target);
+                    return true;
+                }
+
                 for (CityEntity entity : cityEntities) {
                     if (matchName(newText, entity.getCityName())) {
                         target.add(entity);
@@ -158,26 +182,31 @@ public class PickCityActivity extends Activity {
                     return true;
                 }
 
-                for (int i = 0; i < text.length(); i++) {
-                    if (text.charAt(i) == cityName.charAt(i)) { // 如果字符相同
+                int textPtr = -1, namePtr = -1;
+                while (textPtr < text.length() - 1 && namePtr < cityName.length() - 1) {
+                    textPtr++;
+                    namePtr++;
+
+                    if (text.charAt(textPtr) == cityName.charAt(namePtr)) {   // 如果汉字相同
                         continue;
                     }
 
-                    String pinyin = Pinyin.toPinyin(cityName.charAt(i)).toLowerCase();
+                    String pinyin = Pinyin.toPinyin(cityName.charAt(namePtr)).toLowerCase();
 
-                    if (text.startsWith(pinyin)) { // 如果包含拼音
-                        text = text.substring(pinyin.length());
+                    if (text.startsWith(pinyin)) { // 如果包含全拼
+                        textPtr += pinyin.length() - 1;
                         continue;
                     }
 
-                    if (text.charAt(i) <= 'z' && text.charAt(i) >= 'a') { // 如果包含拼音首字母
-                        if (text.charAt(i) == pinyin.charAt(0)) {
+                    if ('a' <= text.charAt(textPtr) && text.charAt(textPtr) <= 'z') { // 如果包含拼音首字母
+                        if (text.charAt(textPtr) == pinyin.charAt(0)) {
                             continue;
                         }
                     }
 
                     return false;
                 }
+
 
                 return true;
             }

@@ -88,10 +88,10 @@ public class MainActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         String cityCode = data.getStringExtra("cityCode");
-        if(cityCode.equals("null")){
+        if (cityCode.equals("null")) {
             return;
         }
-        Toast.makeText(this,"get city code! " + cityCode, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "get city code! " + cityCode, Toast.LENGTH_SHORT).show();
         refreshWeather(cityCode);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("main_city_code", cityCode);
