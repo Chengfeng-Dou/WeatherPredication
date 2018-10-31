@@ -1,7 +1,6 @@
-package model;
+package show_weather.bean;
 
 import java.util.Arrays;
-import java.util.Objects;
 
 /**
  * Created by douchengfeng on 2018/10/10.

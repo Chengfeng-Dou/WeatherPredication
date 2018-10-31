@@ -1,4 +1,4 @@
-package model;
+package show_weather.bean;
 
 
 public class CityEntity {

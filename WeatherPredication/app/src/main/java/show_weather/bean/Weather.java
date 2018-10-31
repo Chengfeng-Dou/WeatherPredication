@@ -1,4 +1,4 @@
-package model;
+package show_weather.bean;
 
 /**
  * Created by douchengfeng on 2018/10/10.

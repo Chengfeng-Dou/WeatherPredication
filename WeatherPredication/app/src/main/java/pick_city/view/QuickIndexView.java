@@ -1,4 +1,4 @@
-package select_city.view;
+package pick_city.view;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -10,7 +10,10 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-import select_city.utils.DensityUtil;
+import java.util.List;
+
+import pick_city.bean.CitiesBean;
+import pick_city.utils.DensityUtil;
 
 
 /**
@@ -26,6 +29,7 @@ public class QuickIndexView extends View {
     private int cellWidth;
     private int cellHeight;
     private Paint paint;
+    private List<CitiesBean.DataBean> data;
 
     public QuickIndexView(Context context) {
         this(context, null);
@@ -42,6 +46,14 @@ public class QuickIndexView extends View {
         paint.setAntiAlias(true);
         paint.setTextSize(DensityUtil.dip2px(getContext(), 11));
         paint.setFakeBoldText(true);
+    }
+
+    public void setIndexData(List<CitiesBean.DataBean> data){
+        this.data = data;
+    }
+
+    public List<CitiesBean.DataBean> getData() {
+        return data;
     }
 
     @Override

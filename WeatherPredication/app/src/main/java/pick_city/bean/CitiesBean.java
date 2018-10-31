@@ -1,4 +1,4 @@
-package select_city.bean;
+package pick_city.bean;
 
 import java.util.List;
 

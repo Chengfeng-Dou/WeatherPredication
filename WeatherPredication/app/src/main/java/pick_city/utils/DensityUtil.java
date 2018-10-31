@@ -1,4 +1,4 @@
-package select_city.utils;
+package pick_city.utils;
 
 import android.content.Context;
 

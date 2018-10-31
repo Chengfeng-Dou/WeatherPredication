@@ -1,4 +1,4 @@
-package select_city;
+package pick_city;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -18,11 +18,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import app.WeatherPredication;
-import model.CityEntity;
-import select_city.adapter.CitiesAdapter;
-import select_city.bean.CitiesBean;
-import select_city.view.QuickIndexView;
+import show_weather.WeatherPredicationApp;
+import show_weather.bean.CityEntity;
+import pick_city.adapter.CitiesAdapter;
+import pick_city.bean.CitiesBean;
+import pick_city.view.QuickIndexView;
 
 /**
  * Created by kun on 2016/10/26.
@@ -31,7 +31,6 @@ public class PickCityActivity extends Activity {
 
     private QuickIndexView quickIndexView;
     private RecyclerView recyclerView;
-    private CitiesAdapter adapter;
     private List<CityEntity> cityEntities;
     private SearchView searchView;
 
@@ -39,12 +38,19 @@ public class PickCityActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.pick_city);
-        initView();
-        initEvent();
+        initViews();
+        initEvents();
 
     }
 
-    private void initView() {
+    private void initViews() {
+        initTitleBar();
+        initSearchView();
+        initIndexView();
+        initRecycleView();
+    }
+
+    private void initTitleBar() {
         ImageView back = findViewById(R.id.back);
 
         back.setOnClickListener(new View.OnClickListener() {
@@ -56,8 +62,28 @@ public class PickCityActivity extends Activity {
                 finish();
             }
         });
+    }
 
+    private void initRecycleView() {
+        recyclerView = findViewById(R.id.recyclerView);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(layoutManager);
+
+        cityEntities = ((WeatherPredicationApp) getApplication()).getCityList();
+        String cityName = getIntent().getStringExtra("currentCity");
+        ((TextView) findViewById(R.id.cur_city)).setText(String.format("当前城市: %s", cityName));
+
+        setAdapter(cityEntities);
+    }
+
+    private void initIndexView() {
+        quickIndexView = findViewById(R.id.quickIndexView);
+    }
+
+    private void initSearchView() {
         searchView = findViewById(R.id.search_city);
+
         int textViewId = getResources().getIdentifier("android:id/search_src_text", null, null);
         TextView textView = searchView.findViewById(textViewId);
         textView.setTextColor(Color.BLACK);//字体颜色
@@ -65,30 +91,18 @@ public class PickCityActivity extends Activity {
         textView.setHintTextColor(Color.GRAY);//提示字体颜色**
         textView.setHint("请输入城市名称"); // 设置提示语
         searchView.setIconified(false);
+
         int closeBtnId = getResources().getIdentifier("android:id/search_close_btn", null, null);
         ImageView closeBtn = searchView.findViewById(closeBtnId);
         closeBtn.setVisibility(View.INVISIBLE); //使关闭按钮不可见
-
-
-
-        quickIndexView = findViewById(R.id.quickIndexView);
-
-        recyclerView = findViewById(R.id.recyclerView);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(layoutManager);
-
-        cityEntities = ((WeatherPredication) getApplication()).getCityList();
-        String cityName = getIntent().getStringExtra("currentCity");
-        ((TextView) findViewById(R.id.cur_city)).setText(String.format("当前城市: %s", cityName));
-
-        setAdapter(cityEntities);
     }
 
 
     private void setAdapter(List<CityEntity> cityEntities) {
-        adapter = new CitiesAdapter(this, entity2DataBean(cityEntities));
+        List<CitiesBean.DataBean> data = entity2DataBean(cityEntities);
+        CitiesAdapter adapter = new CitiesAdapter(this, data);
         recyclerView.setAdapter(adapter);
+        quickIndexView.setIndexData(data);
     }
 
     private List<CitiesBean.DataBean> entity2DataBean(List<CityEntity> cityEntities) {
@@ -120,11 +134,11 @@ public class PickCityActivity extends Activity {
         return dataBeans;
     }
 
-    private void initEvent() {
+    private void initEvents() {
         quickIndexView.setOnIndexChangeListener(new QuickIndexView.OnIndexChangeListener() {
             @Override
             public void onIndexChange(String words) {
-                List<CitiesBean.DataBean> data = adapter.getData();
+                List<CitiesBean.DataBean> data = quickIndexView.getData();
                 if (data != null && data.size() > 0) {
                     int count = 0;
                     for (CitiesBean.DataBean dataBean : data) {

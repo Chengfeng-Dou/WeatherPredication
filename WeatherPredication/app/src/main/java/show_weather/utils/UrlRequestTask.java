@@ -1,4 +1,4 @@
-package util;
+package show_weather.utils;
 
 import android.os.Handler;
 import android.os.Message;

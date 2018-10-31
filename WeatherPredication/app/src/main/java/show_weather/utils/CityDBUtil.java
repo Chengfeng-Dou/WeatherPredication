@@ -1,4 +1,4 @@
-package util;
+package show_weather.utils;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-import model.CityEntity;
+import show_weather.bean.CityEntity;
 
 public class CityDBUtil {
     private static final String DB_NAME = "city.db";

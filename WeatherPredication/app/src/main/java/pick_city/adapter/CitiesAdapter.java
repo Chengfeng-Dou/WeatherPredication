@@ -1,4 +1,4 @@
-package select_city.adapter;
+package pick_city.adapter;
 
 import android.app.Activity;
 import android.content.Context;
@@ -14,7 +14,7 @@ import com.weather.douchengfeng.weatherpredication.R;
 import java.util.ArrayList;
 import java.util.List;
 
-import select_city.bean.CitiesBean;
+import pick_city.bean.CitiesBean;
 
 
 /**
@@ -23,7 +23,6 @@ import select_city.bean.CitiesBean;
 public class CitiesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context context;
-    private List<CitiesBean.DataBean> cities;
     private ArrayList<DataHolder> dataHolders;
 
     private final int HEAD = 0;
@@ -32,13 +31,11 @@ public class CitiesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     public CitiesAdapter(Context context, List<CitiesBean.DataBean> cities) {
         this.context = context;
-        this.cities = cities;
-
-        initDataHolder();
+        initDataHolder(cities);
     }
 
-    private void initDataHolder() {
-        this.dataHolders = new ArrayList<>(computeSize());
+    private void initDataHolder(List<CitiesBean.DataBean> cities) {
+        this.dataHolders = new ArrayList<>();
         DataHolder head = new DataHolder();
         head.type = HEAD;
         dataHolders.add(head);
@@ -59,22 +56,6 @@ public class CitiesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         }
     }
 
-    public List<CitiesBean.DataBean> getData() {
-        return cities;
-    }
-
-    private int computeSize() {
-        int count = 1;
-        if (cities == null || cities.size() == 0) return count;
-
-        count += cities.size();
-        for (CitiesBean.DataBean datesBean : cities) {
-            count += datesBean.getAddressList().size();
-        }
-
-        return count;
-    }
-
     @Override
     public int getItemCount() {
         return dataHolders.size();
@@ -93,13 +74,13 @@ public class CitiesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
             case HEAD:
-                View head = LayoutInflater.from(context).inflate(R.layout.layout_head, parent, false);
+                View head = LayoutInflater.from(context).inflate(R.layout.pick_city_layout_head, parent, false);
                 return new HeadViewHolder(head);
             case WORD:
-                View word = LayoutInflater.from(context).inflate(R.layout.layout_word, parent, false);
+                View word = LayoutInflater.from(context).inflate(R.layout.pick_city_layout_word, parent, false);
                 return new WordViewHolder(word);
             case CITY:
-                View city = LayoutInflater.from(context).inflate(R.layout.layout_city, parent, false);
+                View city = LayoutInflater.from(context).inflate(R.layout.pick_city_layout_city, parent, false);
                 return new CityViewHolder(city);
         }
         return null;

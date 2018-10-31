@@ -1,4 +1,4 @@
-package util;
+package show_weather.utils;
 
 /**
  * Created by douchengfeng on 2018/10/9.
@@ -7,5 +7,5 @@ package util;
 
 public class MsgFlag {
     public final static int REFRESH = 1;
-
+    public final static int LOCATION = 2;
 }
