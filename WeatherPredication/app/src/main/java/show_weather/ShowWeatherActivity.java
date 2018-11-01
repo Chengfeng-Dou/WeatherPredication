@@ -92,7 +92,7 @@ public class ShowWeatherActivity extends Activity {
             @Override
             public void onClick(View view) {
                 Intent selectCity = new Intent(ShowWeatherActivity.this, PickCityActivity.class);
-                selectCity.putExtra("currentCity", cityData.getCity());
+                selectCity.putExtra("currentCity", city.getText());
                 startActivityForResult(selectCity, 2);
             }
         });

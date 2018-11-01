@@ -35,7 +35,13 @@ class UrlRequestTask implements Runnable{
         String response = connectAndGetResponse();
         if(response != null){
             handleResponse(response);
+            return;
         }
+
+        Message toast = new Message();
+        toast.obj = "请检查网络连接";
+        toast.what = MsgFlag.TOAST;
+        msgHandler.sendMessage(toast);
     }
 
     private String connectAndGetResponse(){
