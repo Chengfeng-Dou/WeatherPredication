@@ -96,10 +96,13 @@ public class ShowWeatherActivity extends Activity {
                 startActivityForResult(selectCity, 2);
             }
         });
+
         locationBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //  在获取信息的时候先要上锁，避免重复获取
                 if (failedToSetCannotRefreshNow()) return;
+
                 LocationUtil locationUtil = LocationUtil.getInstance(ShowWeatherActivity.this);
                 String city = locationUtil.getCurrentLocation();
                 if (city == null) {
@@ -109,6 +112,7 @@ public class ShowWeatherActivity extends Activity {
                 WeatherPredicationApp app = (WeatherPredicationApp) getApplication();
                 List<CityEntity> cityEntities = app.getCityList();
 
+                //  通过遍历城市列表，找到当前城市的cityCode，并刷新
                 for (CityEntity cityEntity : cityEntities) {
                     if (cityEntity.getCityName().equals(city)) {
                         String cityCode = cityEntity.getCityCode();
@@ -160,6 +164,8 @@ public class ShowWeatherActivity extends Activity {
     }
 
     private boolean failedToSetCannotRefreshNow() {
+        // 使用synchronized关键字处理线程并发
+        // isRefreshing 定义如下： private volatile boolean isRefreshing = false;
         synchronized (ShowWeatherActivity.class) {
             if (isRefreshing) {
                 return true;
@@ -167,15 +173,24 @@ public class ShowWeatherActivity extends Activity {
             isRefreshing = true;
         }
 
+        // 如果上锁成功，那么设置一个timer，防止获取信息的时候卡死，锁无法解除的情况
         refreshTimer = new Timer();
         refreshTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                setCanRefreshNow();
-                Toast.makeText(ShowWeatherActivity.this, "天气获取失败", Toast.LENGTH_SHORT).show();
+                // 停止调度
+                Message stop = new Message();
+                stop.what = MsgFlag.STOP_REFRESH;
+                dataHandler.sendMessage(stop);
+
+                Message toast = new Message();
+                toast.what = MsgFlag.TOAST;
+                toast.obj = "天气获取失败";
+                dataHandler.sendMessage(toast);
             }
         }, 5000);
 
+        // 让更新图标旋转
         refreshBtn.startAnimation(rotate);
         return false;
     }
@@ -185,11 +200,13 @@ public class ShowWeatherActivity extends Activity {
         synchronized (ShowWeatherActivity.class) {
             isRefreshing = false;
 
+            // 将计时的 timer 关闭，由于timer取消后不能够再次使用，所以手动置为null，释放资源，防止MemoryLeak
             if (refreshTimer != null) {
                 refreshTimer.cancel();
                 refreshTimer = null;
             }
 
+            // 停止旋转
             refreshBtn.clearAnimation();
         }
     }
@@ -240,8 +257,19 @@ public class ShowWeatherActivity extends Activity {
 
                     String response = (String) msg.obj;
                     mainActivity.refreshData(response);
-
                     break;
+
+                case MsgFlag.STOP_REFRESH:
+
+                    mainActivity.setCanRefreshNow();
+                    break;
+
+                case MsgFlag.TOAST:
+
+                    String info = (String) msg.obj;
+                    Toast.makeText(mainActivity, info, Toast.LENGTH_SHORT).show();
+                    break;
+
                 default:
                     break;
             }
