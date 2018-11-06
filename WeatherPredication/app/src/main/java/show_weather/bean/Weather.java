@@ -2,7 +2,6 @@ package show_weather.bean;
 
 /**
  * Created by douchengfeng on 2018/10/10.
- *
  */
 
 public class Weather {
@@ -25,7 +24,7 @@ public class Weather {
     }
 
     public void setHigh(String high) {
-        this.high = high;
+        this.high = high.replace("高温", "");
     }
 
     public String getLow() {
@@ -33,7 +32,7 @@ public class Weather {
     }
 
     public void setLow(String low) {
-        this.low = low;
+        this.low = low.replace("低温", "");
     }
 
     public WeatherDetail getDay() {

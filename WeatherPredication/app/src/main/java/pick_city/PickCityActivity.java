@@ -138,7 +138,7 @@ public class PickCityActivity extends Activity {
         quickIndexView.setOnIndexChangeListener(new QuickIndexView.OnIndexChangeListener() {
             @Override
             public void onIndexChange(String words) {
-                List<CitiesBean.DataBean> data = quickIndexView.getData();
+                List<CitiesBean.DataBean> data = quickIndexView.getIndex();
                 if (data != null && data.size() > 0) {
                     int count = 0;
                     for (CitiesBean.DataBean dataBean : data) {

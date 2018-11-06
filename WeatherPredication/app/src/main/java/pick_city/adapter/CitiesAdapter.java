@@ -35,7 +35,7 @@ public class CitiesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     private void initDataHolder(List<CitiesBean.DataBean> cities) {
-        this.dataHolders = new ArrayList<>();
+        this.dataHolders = new ArrayList<>(cities.size() + 26);
         DataHolder head = new DataHolder();
         head.type = HEAD;
         dataHolders.add(head);

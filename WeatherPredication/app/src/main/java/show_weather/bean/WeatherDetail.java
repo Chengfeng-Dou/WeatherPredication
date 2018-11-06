@@ -2,13 +2,12 @@ package show_weather.bean;
 
 /**
  * Created by douchengfeng on 2018/10/10.
- *
  */
 
 public class WeatherDetail {
-    String type;
-    String fengxiang;
-    String fengli;
+    private String type;
+    private String fengxiang;
+    private String fengli;
 
     public String getType() {
         return type;

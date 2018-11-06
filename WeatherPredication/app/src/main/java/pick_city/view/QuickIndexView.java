@@ -29,7 +29,7 @@ public class QuickIndexView extends View {
     private int cellWidth;
     private int cellHeight;
     private Paint paint;
-    private List<CitiesBean.DataBean> data;
+    private List<CitiesBean.DataBean> index;
 
     public QuickIndexView(Context context) {
         this(context, null);
@@ -49,11 +49,11 @@ public class QuickIndexView extends View {
     }
 
     public void setIndexData(List<CitiesBean.DataBean> data){
-        this.data = data;
+        this.index = data;
     }
 
-    public List<CitiesBean.DataBean> getData() {
-        return data;
+    public List<CitiesBean.DataBean> getIndex() {
+        return index;
     }
 
     @Override

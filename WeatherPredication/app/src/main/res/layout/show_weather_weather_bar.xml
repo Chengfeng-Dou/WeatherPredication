@@ -5,6 +5,7 @@
     android:layout_height="wrap_content">
 
     <ImageView
+        android:id="@+id/today_weather"
         android:layout_width="0dp"
         android:layout_height="100dp"
         android:src="@drawable/biz_plugin_weather_qing"
@@ -37,10 +38,10 @@
             android:gravity="start"/>
 
         <TextView
-            android:id="@+id/weather"
+            android:id="@+id/fengxiang"
             android:layout_width="match_parent"
             android:layout_height="25dp"
-            android:text="@string/weather"
+            android:text="@string/fengxiang"
             android:textColor="#ffffff"
             android:gravity="start"/>
 

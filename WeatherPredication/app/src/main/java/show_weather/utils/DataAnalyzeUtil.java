@@ -2,6 +2,8 @@ package show_weather.utils;
 
 import android.util.Xml;
 
+import com.weather.douchengfeng.weatherpredication.R;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -21,7 +23,27 @@ import java.util.Map;
  *
  */
 
-public class XmlUtil {
+public class DataAnalyzeUtil {
+
+    public static int getImageIdByWeather(String weather){
+        if(weather.contains("晴")){
+            return R.drawable.w_qing;
+        }
+
+        if(weather.contains("云")){
+            return R.drawable.w_yun;
+        }
+
+        if(weather.contains("雨")){
+            return R.drawable.w_yu;
+        }
+
+        if(weather.contains("雪")){
+            return R.drawable.w_xue;
+        }
+
+        return R.drawable.w_unknown;
+    }
 
     public <T> T parseSimpleObjectFromXML(Class<T> tClass, String xml){
         Map<String, Field> fieldsNameMap = getFieldsNameMap(tClass);

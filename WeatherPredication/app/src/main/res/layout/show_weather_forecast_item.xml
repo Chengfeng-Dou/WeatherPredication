@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:paddingEnd="5dp"
+    android:paddingStart="5dp">
+
+    <TextView
+        android:id="@+id/forecast_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#fff"
+        android:textSize="15sp"
+        android:layout_gravity="center"
+        android:textAlignment="center"/>
+
+    <ImageView
+        android:id="@+id/forecast_pic"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:contentDescription="@string/todo"
+        android:layout_gravity="center"/>
+
+    <show_weather.views.SingleLineTextView
+        android:id="@+id/forecast_temperature"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#fff"
+        android:textSize="15sp"
+        android:layout_gravity="center"
+        android:textAlignment="center"/>
+
+    <TextView
+        android:id="@+id/forecast_fengxiang"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#fff"
+        android:textSize="15sp"
+        android:layout_gravity="center"
+        android:textAlignment="center"/>
+
+    <TextView
+        android:id="@+id/forecast_fengli"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#fff"
+        android:textSize="15sp"
+        android:layout_gravity="center"
+        android:textAlignment="center"/>
+
+</LinearLayout>

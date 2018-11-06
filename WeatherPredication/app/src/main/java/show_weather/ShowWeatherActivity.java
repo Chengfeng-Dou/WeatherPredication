@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -20,14 +21,16 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import pick_city.PickCityActivity;
+import show_weather.adapter.WeatherPagerAdapter;
 import show_weather.bean.CityData;
 import show_weather.bean.CityEntity;
 import show_weather.bean.Weather;
+import show_weather.bean.WeatherDetail;
 import show_weather.utils.DateUtil;
 import show_weather.utils.LocationUtil;
 import show_weather.utils.MsgFlag;
 import show_weather.utils.NetUtil;
-import show_weather.utils.XmlUtil;
+import show_weather.utils.DataAnalyzeUtil;
 
 public class ShowWeatherActivity extends Activity {
     private ImageView refreshBtn;
@@ -35,7 +38,7 @@ public class ShowWeatherActivity extends Activity {
     private TextView cityName;
     private TextView dateTime;
     private TextView temperature;
-    private TextView weather;
+    private TextView fengxiang;
     private TextView fengli;
     private TextView pm25;
     private TextView quality;
@@ -44,16 +47,17 @@ public class ShowWeatherActivity extends Activity {
     private TextView wendu;
     private TextView shidu;
     private ImageView locationBtn;
+    private ImageView weatherImg;
 
 
     private Handler dataHandler = new RefreshDateReceiver(this);
-    private XmlUtil parser = new XmlUtil();
+    private DataAnalyzeUtil parser = new DataAnalyzeUtil();
     private SharedPreferences sharedPreferences;
-    private CityData cityData;
 
     private volatile boolean isRefreshing = false;
     private Animation rotate;
     private Timer refreshTimer;
+    private ViewPager viewPager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -73,7 +77,7 @@ public class ShowWeatherActivity extends Activity {
         cityName = findViewById(R.id.city_name);
         dateTime = findViewById(R.id.datetime);
         temperature = findViewById(R.id.temperature);
-        weather = findViewById(R.id.weather);
+        fengxiang = findViewById(R.id.fengxiang);
         fengli = findViewById(R.id.fengli);
         pm25 = findViewById(R.id.pm25);
         quality = findViewById(R.id.quality);
@@ -84,6 +88,8 @@ public class ShowWeatherActivity extends Activity {
         cityManage = findViewById(R.id.title_city_manager);
         rotate = AnimationUtils.loadAnimation(this, R.anim.rotate_anim);
         locationBtn = findViewById(R.id.m_cur_location);
+        viewPager = findViewById(R.id.forecast);
+        weatherImg = findViewById(R.id.today_weather);
     }
 
     private void initEvents() {
@@ -164,14 +170,11 @@ public class ShowWeatherActivity extends Activity {
     }
 
     private boolean failedToSetCannotRefreshNow() {
-        // 使用synchronized关键字处理线程并发
-        // isRefreshing 定义如下： private volatile boolean isRefreshing = false;
-        synchronized (ShowWeatherActivity.class) {
-            if (isRefreshing) {
-                return true;
-            }
-            isRefreshing = true;
+        if (isRefreshing) {
+            return true;
         }
+        isRefreshing = true;
+
 
         // 如果上锁成功，那么设置一个timer，防止获取信息的时候卡死，锁无法解除的情况
         refreshTimer = new Timer();
@@ -197,18 +200,17 @@ public class ShowWeatherActivity extends Activity {
 
 
     private void setCanRefreshNow() {
-        synchronized (ShowWeatherActivity.class) {
-            isRefreshing = false;
+        isRefreshing = false;
 
-            // 将计时的 timer 关闭，由于timer取消后不能够再次使用，所以手动置为null，释放资源，防止MemoryLeak
-            if (refreshTimer != null) {
-                refreshTimer.cancel();
-                refreshTimer = null;
-            }
-
-            // 停止旋转
-            refreshBtn.clearAnimation();
+        // 将计时的 timer 关闭，由于timer取消后不能够再次使用，所以手动置为null，释放资源，防止MemoryLeak
+        if (refreshTimer != null) {
+            refreshTimer.cancel();
+            refreshTimer = null;
         }
+
+        // 停止旋转
+        refreshBtn.clearAnimation();
+
     }
 
 
@@ -219,7 +221,20 @@ public class ShowWeatherActivity extends Activity {
     }
 
     private void refreshData(String data) {
-        cityData = parser.parseSimpleObjectFromXML(CityData.class, data);
+        CityData cityData = parser.parseSimpleObjectFromXML(CityData.class, data);
+        refreshTodayWeather(cityData);
+
+
+        WeatherPagerAdapter adapter = new WeatherPagerAdapter(this);
+        adapter.setData(cityData.getForecast(), 1);
+        viewPager.setAdapter(adapter);
+
+
+        setCanRefreshNow();
+        Toast.makeText(this, "天气更新成功", Toast.LENGTH_SHORT).show();
+    }
+
+    private void refreshTodayWeather(CityData cityData){
         cityName.setText(String.format("%s 天气", cityData.getCity()));
         city.setText(cityData.getCity());
         publishTime.setText(String.format("更新时间 %s", cityData.getUpdatetime()));
@@ -232,14 +247,10 @@ public class ShowWeatherActivity extends Activity {
         Weather todayWeather = cityData.getForecast()[0];
         dateTime.setText(todayWeather.getDate());
         temperature.setText(String.format("%s-%s", todayWeather.getLow(), todayWeather.getHigh()));
-        if (DateUtil.isDayTime()) {
-            weather.setText(todayWeather.getDay().getFengxiang());
-        } else {
-            weather.setText(todayWeather.getNight().getFengxiang());
-        }
 
-        setCanRefreshNow();
-        Toast.makeText(this, "天气更新成功", Toast.LENGTH_SHORT).show();
+        WeatherDetail detail = DateUtil.isDayTime() ? todayWeather.getDay() : todayWeather.getNight();
+        fengxiang.setText(detail.getFengxiang());
+        weatherImg.setImageResource(DataAnalyzeUtil.getImageIdByWeather(detail.getType()));
     }
 
 
