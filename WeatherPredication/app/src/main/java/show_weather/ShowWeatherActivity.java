@@ -225,9 +225,21 @@ public class ShowWeatherActivity extends Activity {
         refreshTodayWeather(cityData);
 
 
-        WeatherPagerAdapter adapter = new WeatherPagerAdapter(this);
+        final WeatherPagerAdapter adapter = new WeatherPagerAdapter(this);
         adapter.setData(cityData.getForecast(), 1);
         viewPager.setAdapter(adapter);
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
+
+            @Override
+            public void onPageSelected(int position) {
+                adapter.setDotIsSelected(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {}
+        });
 
 
         setCanRefreshNow();

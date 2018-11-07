@@ -1,13 +1,16 @@
 package show_weather.adapter;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.weather.douchengfeng.weatherpredication.R;
 
@@ -21,16 +24,55 @@ import show_weather.utils.DataAnalyzeUtil;
 public class WeatherPagerAdapter extends PagerAdapter {
     private Context context;
     private ArrayList<View> views = new ArrayList<>();
+    private LinearLayout dotView;
+    private int selectPos = 0;
 
     public WeatherPagerAdapter(Context context) {
         this.context = context;
-
+        Activity activity = (Activity) context;
+        dotView = activity.findViewById(R.id.dot_view);
     }
 
     public void setData(Weather[] forecast, int startPos) {
-        for(int i = startPos; i < forecast.length; i ++){
+        for (int i = startPos; i < forecast.length; i++) {
             views.add(inflateViewByData(forecast[i]));
         }
+
+        for (int i = 0; i < (((forecast.length - startPos) / 3) + 1); i++) {
+            addDot(i == 0);
+        }
+    }
+
+    public void setDotIsSelected(int pos) {
+        pos = pos / 2;
+
+        ImageView select = (ImageView) dotView.getChildAt(pos);
+        select.setImageResource(R.drawable.d_select);
+
+        if(selectPos == pos){
+            return;
+        }
+
+        ImageView unSelect = (ImageView) dotView.getChildAt(selectPos);
+        unSelect.setImageResource(R.drawable.d_unselect);
+
+        selectPos = pos;
+    }
+
+    private void addDot(boolean isFirst) {
+        ImageView dot = new ImageView(context);
+        dot.setMaxWidth(10);
+        dot.setMaxHeight(10);
+        if (isFirst) {
+            dot.setImageResource(R.drawable.d_select);
+        } else {
+            dot.setImageResource(R.drawable.d_unselect);
+        }
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(30, 30);
+        params.leftMargin = 3;
+        params.rightMargin = 3;
+        dotView.addView(dot, params);
     }
 
     @SuppressLint("InflateParams")
@@ -45,7 +87,7 @@ public class WeatherPagerAdapter extends PagerAdapter {
         date.setText(weather.getDate());
         wendu.setText(String.format("%s-%s", weather.getLow(), weather.getHigh()));
 
-        WeatherDetail detail = DateUtil.isDayTime()? weather.getDay(): weather.getNight();
+        WeatherDetail detail = DateUtil.isDayTime() ? weather.getDay() : weather.getNight();
         pic.setImageResource(DataAnalyzeUtil.getImageIdByWeather(detail.getType()));
         fengli.setText(detail.getFengli());
         fengxiang.setText(detail.getFengxiang());
