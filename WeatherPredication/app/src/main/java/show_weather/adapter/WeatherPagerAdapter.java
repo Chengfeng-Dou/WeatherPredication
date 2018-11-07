@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.weather.douchengfeng.weatherpredication.R;
 
@@ -18,8 +17,8 @@ import java.util.ArrayList;
 
 import show_weather.bean.Weather;
 import show_weather.bean.WeatherDetail;
-import show_weather.utils.DateUtil;
 import show_weather.utils.DataAnalyzeUtil;
+import show_weather.utils.DateUtil;
 
 public class WeatherPagerAdapter extends PagerAdapter {
     private Context context;
@@ -31,9 +30,13 @@ public class WeatherPagerAdapter extends PagerAdapter {
         this.context = context;
         Activity activity = (Activity) context;
         dotView = activity.findViewById(R.id.dot_view);
+        dotView.removeAllViews();
     }
 
     public void setData(Weather[] forecast, int startPos) {
+        if(forecast == null){
+            return;
+        }
         for (int i = startPos; i < forecast.length; i++) {
             views.add(inflateViewByData(forecast[i]));
         }
@@ -48,7 +51,6 @@ public class WeatherPagerAdapter extends PagerAdapter {
         if(pos % 3 >= 1) temp++; //当下一页能够显示两个的时候就算翻到下一页了
         pos = temp;
 
-        Toast.makeText(context, pos + "", Toast.LENGTH_SHORT).show();
 
         ImageView select = (ImageView) dotView.getChildAt(pos);
         select.setImageResource(R.drawable.d_select);

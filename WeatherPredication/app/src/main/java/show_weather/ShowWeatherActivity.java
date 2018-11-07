@@ -256,6 +256,9 @@ public class ShowWeatherActivity extends Activity {
         wendu.setText(String.format("温度 %s", cityData.getWendu()));
         shidu.setText(String.format("湿度 %s", cityData.getShidu()));
 
+        if(cityData.getForecast() == null){
+            return;
+        }
         Weather todayWeather = cityData.getForecast()[0];
         dateTime.setText(todayWeather.getDate());
         temperature.setText(String.format("%s-%s", todayWeather.getLow(), todayWeather.getHigh()));
