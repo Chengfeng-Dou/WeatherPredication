@@ -45,7 +45,7 @@ public class WeatherPagerAdapter extends PagerAdapter {
 
     public void setDotIsSelected(int pos) {
         pos = pos / 3;
-        if(pos % 3 == 2) pos++; //当下一页能够显示两个的时候就算翻到下一页了
+        if(pos % 3 >= 1) pos++; //当下一页能够显示两个的时候就算翻到下一页了
 
         ImageView select = (ImageView) dotView.getChildAt(pos);
         select.setImageResource(R.drawable.d_select);
